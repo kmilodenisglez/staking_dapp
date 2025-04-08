@@ -25,7 +25,12 @@ Option 2 – Using the `deploy.js` script:
 npx hardhat run scripts/deploy.js --network localhost
 ```
 
-After deployment, you need to update the contract address in your frontend. In `staking-frontend/src/App.js`, the current address is:
+After deployment, you need interact with the contract (optional). Run `scripts/interact.js` to test:
+```shell
+npx hardhat run scripts/interact.js --network localhost
+```
+
+Then, you need to update the contract address in your frontend. In `staking-frontend/src/App.js`, the current address is:
 ```javascript
 const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 ```
