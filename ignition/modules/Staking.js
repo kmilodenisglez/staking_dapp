@@ -1,10 +1,10 @@
 const { buildModule } = require("@nomicfoundation/hardhat-ignition/modules");
 
 const StakingModule = buildModule("StakingModule", (m) => {
-  // Define el contrato a desplegar
+  // Define the contract to deploy
   const stakingContract = m.contract("StakingContract");
 
-  // Exporta el contrato desplegado
+  // Export the deployed contract
   return { stakingContract };
 });
 
