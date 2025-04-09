@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import './App.css';
 
-const contractAddress = "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707";
+const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 const contractABI = [
   {
     "inputs": [
@@ -99,7 +99,7 @@ function App() {
         if (accounts.length > 0) {
           const network = await provider.getNetwork();
           setIsConnected(true);
-          setAccount(accounts[0]);
+          setAccount(accounts[0].address);
           setNetworkName(network.name);
           getBalances();
         }
@@ -111,7 +111,7 @@ function App() {
 
   const handleAccountsChanged = async (accounts) => {
     if (accounts.length > 0) {
-      setAccount(accounts[0]);
+      setAccount(accounts[0].toString());
       setIsConnected(true);
       getBalances();
     } else {
@@ -183,14 +183,15 @@ function App() {
 
       // Connect to window.ethereum (MetaMask)
       const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = provider.getSigner();
+      // Esperar a que se resuelva la promesa del signer
+      const signer = await provider.getSigner();
       const contract = new ethers.Contract(contractAddress, contractABI, signer);
       
       const userBalance = await contract.stakedBalances(account);
       const total = await contract.totalStaked();
       
-      setStakedBalance(ethers.utils.formatEther(userBalance));
-      setTotalStaked(ethers.utils.formatEther(total));
+      setStakedBalance(ethers.formatEther(userBalance));
+      setTotalStaked(ethers.formatEther(total));
     } catch (err) {
       setStatus("Error fetching balances: " + err.message);
     }
@@ -232,7 +233,8 @@ function App() {
 
       // Connect to window.ethereum (MetaMask)
       const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = provider.getSigner();
+      // Esperar a que se resuelva la promesa del signer
+      const signer = await provider.getSigner();
       const contract = new ethers.Contract(contractAddress, contractABI, signer);
       
       // Validate amount
@@ -240,8 +242,8 @@ function App() {
         throw new Error("Please enter a valid amount");
       }
 
-      const tx = await contract.stake(ethers.utils.parseEther(amount), { 
-        value: ethers.utils.parseEther(amount) 
+      const tx = await contract.stake(ethers.parseEther(amount), { 
+        value: ethers.parseEther(amount) 
       });
       setStatus("Transaction pending...");
       await tx.wait();
@@ -258,9 +260,10 @@ function App() {
       if (!window.ethereum) return alert("MetaMask not installed");
       // Connect to window.ethereum (MetaMask)
       const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = provider.getSigner();
+      // Esperar a que se resuelva la promesa del signer
+      const signer = await provider.getSigner();
       const contract = new ethers.Contract(contractAddress, contractABI, signer);
-      const tx = await contract.unstake(ethers.utils.parseEther(amount));
+      const tx = await contract.unstake(ethers.parseEther(amount));
       await tx.wait();
       setStatus("Tokens unstaked successfully");
       setAmount("");

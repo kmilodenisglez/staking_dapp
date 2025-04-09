@@ -43,4 +43,4 @@ To verify that everything is correct:
     ```
 2. Deploy the contract using one of the options mentioned above.
 3. Copy the address of the deployed contract and update contractAddress in your frontend.
-4. Restart your React app.
+4. Restart your [React app](./staking-frontend/README.md).
