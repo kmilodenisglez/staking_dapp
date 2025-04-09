@@ -1,6 +1,7 @@
 # Sample Hardhat Project
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
+This is a basic Ethereum staking decentralized application (dApp) built with React for the frontend and Solidity smart contracts deployed using Hardhat. Users can stake and unstake ETH, view their staked balance, and see the total ETH staked in the contract.
+It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
 
 Try running some of the following tasks:
 
