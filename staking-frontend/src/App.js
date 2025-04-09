@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
 import './App.css';
 
@@ -73,24 +73,37 @@ function App() {
   const [account, setAccount] = useState("");
   const [networkName, setNetworkName] = useState("");
 
-  useEffect(() => {
-    checkWalletConnection();
-    if (window.ethereum) {
-      // Listen to account changes
-      window.ethereum.on('accountsChanged', handleAccountsChanged);
-      // Listen for network changes
-      window.ethereum.on('chainChanged', handleChainChanged);
+  const getBalances = useCallback(async () => {
+    try {
+      if (!isConnected) return;
+
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      const contract = new ethers.Contract(contractAddress, contractABI, signer);
+      
+      const userBalance = await contract.stakedBalances(account);
+      const total = await contract.totalStaked();
+      
+      setStakedBalance(ethers.formatEther(userBalance));
+      setTotalStaked(ethers.formatEther(total));
+    } catch (err) {
+      setStatus("Error fetching balances: " + err.message);
     }
+  }, [isConnected, account]);
 
-    return () => {
-      if (window.ethereum) {
-        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
-        window.ethereum.removeListener('chainChanged', handleChainChanged);
-      }
-    };
-  }, []);
+  const handleAccountsChanged = useCallback(async (accounts) => {
+    if (accounts.length > 0) {
+      setAccount(accounts[0].toString());
+      setIsConnected(true);
+      getBalances();
+    } else {
+      setIsConnected(false);
+      setAccount("");
+      setStakedBalance("0");
+    }
+  }, [getBalances]);
 
-  const checkWalletConnection = async () => {
+  const checkWalletConnection = useCallback(async () => {
     try {
       if (window.ethereum) {
         const provider = new ethers.BrowserProvider(window.ethereum);
@@ -107,23 +120,27 @@ function App() {
     } catch (error) {
       console.error("Error checking wallet connection:", error);
     }
-  };
+  }, [getBalances]);
 
-  const handleAccountsChanged = async (accounts) => {
-    if (accounts.length > 0) {
-      setAccount(accounts[0].toString());
-      setIsConnected(true);
-      getBalances();
-    } else {
-      setIsConnected(false);
-      setAccount("");
-      setStakedBalance("0");
-    }
-  };
-
-  const handleChainChanged = async (chainId) => {
+  const handleChainChanged = useCallback(() => {
     window.location.reload();
-  };
+  }, []);
+
+  useEffect(() => {
+    checkWalletConnection();
+    
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', handleAccountsChanged);
+      window.ethereum.on('chainChanged', handleChainChanged);
+    }
+
+    return () => {
+      if (window.ethereum) {
+        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+        window.ethereum.removeListener('chainChanged', handleChainChanged);
+      }
+    };
+  }, [checkWalletConnection, handleAccountsChanged, handleChainChanged]);
 
   const connectWallet = async () => {
     try {
@@ -174,26 +191,6 @@ function App() {
       setStatus("Wallet connected successfully");
     } catch (error) {
       setStatus("Error: " + (error.message || "Failed to connect wallet"));
-    }
-  };
-
-  const getBalances = async () => {
-    try {
-      if (!isConnected) return;
-
-      // Connect to window.ethereum (MetaMask)
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      // Esperar a que se resuelva la promesa del signer
-      const signer = await provider.getSigner();
-      const contract = new ethers.Contract(contractAddress, contractABI, signer);
-      
-      const userBalance = await contract.stakedBalances(account);
-      const total = await contract.totalStaked();
-      
-      setStakedBalance(ethers.formatEther(userBalance));
-      setTotalStaked(ethers.formatEther(total));
-    } catch (err) {
-      setStatus("Error fetching balances: " + err.message);
     }
   };
 
