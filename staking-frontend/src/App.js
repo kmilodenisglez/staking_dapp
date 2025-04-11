@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './App.css';
+import WalletInteractions from './components/WalletInteractions';
 
 const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 const contractABI = [
@@ -64,7 +66,7 @@ const contractABI = [
   }
 ];
 
-function App() {
+function StakingApp() {
   const [amount, setAmount] = useState("");
   const [status, setStatus] = useState("");
   const [stakedBalance, setStakedBalance] = useState("0");
@@ -303,6 +305,22 @@ function App() {
       
       <p className="status">{status}</p>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <div className="nav-menu">
+        <Link to="/">Staking dApp</Link>
+        <Link to="/wallet">Wallet Interactions</Link>
+      </div>
+      
+      <Routes>
+        <Route path="/" element={<StakingApp />} />
+        <Route path="/wallet" element={<WalletInteractions />} />
+      </Routes>
+    </Router>
   );
 }
 
