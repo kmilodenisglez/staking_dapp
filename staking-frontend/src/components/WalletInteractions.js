@@ -43,10 +43,20 @@ function WalletInteractions() {
       if (!message) throw new Error("Please enter a message to sign");
       if (!window.ethereum) throw new Error("MetaMask not installed");
 
+      // Request account access
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+      // Request switch to localhost network (chainId 31337 for Hardhat)
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: '0x7A69' }], // 31337 in hex
+      });
+      
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
       
       const signature = await signer.signMessage(message);
+      
       setSignedMessage(signature);
       setStatus('Message signed successfully');
     } catch (err) {
@@ -156,49 +166,108 @@ function WalletInteractions() {
 
 
 
+  const switchLocalNetwork = async () => {
+    try {
+      if (!window.ethereum) {
+        throw new Error("MetaMask not installed");
+      }
+
+      // Request connection to MetaMask
+      const accounts = await window.ethereum.request({
+        method: 'eth_requestAccounts'
+      });
+
+      // Switch to the Sepolia testnet network
+      try {
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: '0x7A69' }], // Sepolia testnet
+        });
+      } catch (switchError) {
+        // If the network does not exist, add it
+        if (switchError.code === 4902) {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+              chainId: '0x7A69',
+              chainName: 'Local Test Network',
+              nativeCurrency: {
+                name: 'Local Curso',
+                symbol: 'GO',
+                decimals: 18
+              },
+              rpcUrls: ['http://127.0.0.1:8545'], // You should use your own Infura ID or other RPC provider
+            }]
+          });
+          console.log("Connected to Local network");
+        } else {
+          throw switchError;
+        }
+      }
+
+      // Connect to window.ethereum (MetaMask)
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const network = await provider.getNetwork();
+
+      setIsConnected(true);
+      setAccount(accounts[0]);
+      setNetworkName(network.name);
+      setStatus("Wallet connected successfully to Local network");
+    } catch (error) {
+      setStatus("Error: " + (error.message || "Failed to connect wallet"));
+    }
+  };
+
+
+
   return (
-    <div className="wallet-interactions">
-      <h2>MetaMask Interactions Example</h2>
-      
-      <div className="wallet-status">
-        {account ? (
-          <>
-            <p>Connected Account: {account.slice(0,6)}...{account.slice(-4)}</p>
-            <p>Balance: {balance} ETH</p>
-            <p>Chain ID: {chainId}</p>
-          </>
-        ) : (
-          <button onClick={connectWallet}>Connect Wallet</button>
-        )}
-      </div>
+      <div className="wallet-interactions">
+        <h2>MetaMask Interactions Example</h2>
 
-      <div className="interaction-section">
-        <h3>Sign Message</h3>
-        <input
-          type="text"
-          placeholder="Enter message to sign"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-        />
-        <button onClick={signMessage}>Sign Message</button>
-        {signedMessage && (
-          <>
-            <p className="signature">Signature: {signedMessage.slice(0,20)}...</p>
-            <button onClick={verifySignature}>Verify Signature</button>
-          </>
-        )}
-      </div>
+        <div className="wallet-status">
+          {account ? (
+              <>
+                <p>Connected Account: {account.slice(0, 6)}...{account.slice(-4)}</p>
+                <p>Balance: {balance} ETH</p>
+                <p>Chain ID: {chainId}</p>
+              </>
+          ) : (
+              <button onClick={connectWallet}>Connect Wallet</button>
+          )}
+        </div>
 
-      <div className="interaction-section">
-        <h3>Network Interaction</h3>
-        <button onClick={switchNetwork}>Switch to Sepolia</button>
-        <button onClick={sendTestTransaction}>Send Test Transaction</button>
-      </div>
+        <div className="interaction-section">
+          <h3>Sign Message</h3>
+          <input
+              type="text"
+              placeholder="Enter message to sign"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+          />
+          <button onClick={signMessage}>Sign Message</button>
+          {signedMessage && (
+              <>
+                <p className="signature">Signature: {signedMessage.slice(0, 20)}...</p>
+                <button onClick={verifySignature}>Verify Signature</button>
+              </>
+          )}
+        </div>
 
-      <div className="status-section">
-        <p>{status}</p>
+        <div className="interaction-section">
+          <h3>Network Interaction</h3>
+          <button onClick={switchNetwork}>Switch to Sepolia</button>
+          <button onClick={sendTestTransaction}>Send Test Transaction</button>
+        </div>
+
+        <div className="interaction-section">
+          <h3>Local Network Interaction</h3>
+          <button onClick={switchLocalNetwork}>Switch to localnet</button>
+          <button onClick={sendTestTransaction}>Send Test Transaction</button>
+        </div>
+        <div className="status-section">
+          <p>{status}</p>
+        </div>
       </div>
-    </div>
   );
 }
 

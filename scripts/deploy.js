@@ -1,6 +1,6 @@
 async function main() {
     const [deployer] = await ethers.getSigners();
-    console.log("Deploying contract with the account:", deployer.address);
+    console.log("Deploying contracts with the account:", deployer.address);
   
     // Get the deployer's balance
     const balance = await deployer.provider.getBalance(deployer.address);

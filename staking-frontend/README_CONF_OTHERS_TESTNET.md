@@ -2,6 +2,8 @@
 
 you need to modify the `chainId`, `chainName`, and `rpcUrls` parameters to match the Sepolia network configuration. Here's the updated code:
 
+> URL: https://docs.metamask.io/services/tutorials/ethereum/send-a-transaction/send-a-transaction-ethers/
+
 ---
 
 ### Updated Code for Sepolia Network
