@@ -28,7 +28,7 @@ Recomendaciones Adicionales:
 - Límites: Establecer montos mínimos/máximos de stake según necesidades.
 */
 
-contract StakingContractBetterWithZeppelin is ReentrancyGuard  {
+contract StakingContractBetterWithZeppelin is ReentrancyGuard {
     uint256 public totalStaked;
     mapping(address => uint256) public stakedBalances;
     mapping(address => uint256) public withdrawable;
@@ -64,21 +64,21 @@ contract StakingContractBetterWithZeppelin is ReentrancyGuard  {
         emit Unstaked(msg.sender, amount);
     }
 
-    function withdraw() public nonReentrant { // <-- Añadir modificador
+    function withdraw() public nonReentrant {
         uint256 amount = withdrawable[msg.sender];
         require(amount > 0, "Nada para retirar");
 
+        // Update state before external call (Checks-Effects-Interactions pattern)
         withdrawable[msg.sender] = 0;
 
-        (bool success, ) = msg.sender.call{ // <-- call con límite de gas
-                value: amount,
-                gas: 30_000 // Limita el gas para prevenir griefing
-            }("");
+        // External call after state updates
+        (bool success, ) = msg.sender.call{
+            value: amount,
+            gas: 30_000   // Limita el gas para prevenir griefing
+        }("");
 
-        if (!success) { // <-- Recupera el estado si falla
-            withdrawable[msg.sender] = amount;
-            revert("Transferencia fallida");
-        }
+        // Revert if transfer fails, but don't update state
+        require(success, "Transferencia fallida");
 
         emit Withdrawn(msg.sender, amount);
     }
