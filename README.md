@@ -9,22 +9,24 @@ Try running some of the following tasks:
 npx hardhat help
 npx hardhat test
 ```
-Run Hardhat node:
+## Run Hardhat node:
 ```shell
 npx hardhat node
 ```
 
+## deploy `staking contract`
 Next, you need to deploy the staking contract. You have two options:
-Option 1 - Using Ignition:
+### Option 1 - Using Ignition:
 
 ```shell
 npx hardhat ignition deploy ./ignition/modules/Staking.js --network localhost
 ```
-Option 2 – Using the `deploy.js` script:
+### Option 2 – Using the `deploy.js` script:
 ```shell
 npx hardhat run scripts/deploy.js cd --network localhost
 ```
 
+## Interact with contract
 After deployment, you need interact with the contract (optional). Run `scripts/interact.js` to test:
 ```shell
 npx hardhat run scripts/interact.js --network localhost
@@ -44,3 +46,11 @@ To verify that everything is correct:
 2. Deploy the contract using one of the options mentioned above.
 3. Copy the address of the deployed contract and update contractAddress in your frontend.
 4. Restart your [React app](./staking-frontend/README.md).
+
+## Security
+Install [slither](https://github.com/crytic/slither) library
+
+### Run
+```shell
+slither .
+```
