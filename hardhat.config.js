@@ -1,8 +1,12 @@
 require("@nomicfoundation/hardhat-ethers");
 require("@nomicfoundation/hardhat-toolbox");
 require("@nomicfoundation/hardhat-chai-matchers");
-
 require("dotenv").config();
+
+// Make sure you have these environment variables in your .env file
+// SEPOLIA_RPC_URL=https://sepolia.infura.io/v3/YOUR-PROJECT-ID
+// PRIVATE_KEY=your-metamask-private-key
+// ETHERSCAN_API_KEY=your-etherscan-api-key
 
 module.exports = {
   solidity: "0.8.28",
