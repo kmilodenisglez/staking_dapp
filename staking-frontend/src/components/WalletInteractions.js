@@ -169,37 +169,42 @@ function WalletInteractions() {
   const switchLocalNetwork = async () => {
     try {
       if (!window.ethereum) {
+        // Try to open MetaMask
+        window.open('https://metamask.io/download/', '_blank');
         throw new Error("MetaMask not installed");
       }
 
-      // Request connection to MetaMask
+      // Request connection to MetaMask - this will open the MetaMask popup
       const accounts = await window.ethereum.request({
         method: 'eth_requestAccounts'
       });
 
-      // Switch to the Sepolia testnet network
+      // Switch to the local network
       try {
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
-          params: [{ chainId: '0x7A69' }], // Sepolia testnet
+          params: [{ chainId: '0x7A69' }], // Local network
         });
       } catch (switchError) {
-        // If the network does not exist, add it
+        // If the network doesn't exist, add it
         if (switchError.code === 4902) {
-          await window.ethereum.request({
-            method: 'wallet_addEthereumChain',
-            params: [{
-              chainId: '0x7A69',
-              chainName: 'Local Test Network',
-              nativeCurrency: {
-                name: 'Local Curso',
-                symbol: 'GO',
-                decimals: 18
-              },
-              rpcUrls: ['http://127.0.0.1:8545'], // You should use your own Infura ID or other RPC provider
-            }]
-          });
-          console.log("Connected to Local network");
+          try {
+            await window.ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [{
+                chainId: '0x7A69',
+                chainName: 'Local Test Network',
+                nativeCurrency: {
+                  name: 'Local ETH',
+                  symbol: 'ETH',
+                  decimals: 18
+                },
+                rpcUrls: ['http://127.0.0.1:8545'],
+              }]
+            });
+          } catch (addError) {
+            throw new Error("Failed to add local network to MetaMask");
+          }
         } else {
           throw switchError;
         }
@@ -213,6 +218,17 @@ function WalletInteractions() {
       setAccount(accounts[0]);
       setNetworkName(network.name);
       setStatus("Wallet connected successfully to Local network");
+
+      // Get balance
+      const balance = await provider.getBalance(accounts[0]);
+      setBalance(ethers.formatEther(balance));
+      
+      // Get chain ID
+      const chainId = await window.ethereum.request({
+        method: 'eth_chainId'
+      });
+      setChainId(chainId);
+
     } catch (error) {
       setStatus("Error: " + (error.message || "Failed to connect wallet"));
     }

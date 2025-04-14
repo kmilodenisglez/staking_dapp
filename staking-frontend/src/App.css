@@ -58,27 +58,45 @@ p {
 }
 
 .wallet-info {
-  background-color: #2c2c3c;
-  padding: 15px;
-  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   margin: 20px 0;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
 }
 
 .connect-button {
-  width: 100%;
-  padding: 12px;
-  margin: 20px 0;
-  border: none;
-  border-radius: 8px;
-  background-color: #4caf50;
+  background-color: #4CAF50;
   color: white;
-  font-size: 16px;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-size: 16px;
+  transition: background-color 0.3s;
 }
 
 .connect-button:hover {
   background-color: #45a049;
+}
+
+.disconnect-button {
+  background-color: #ff4444;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 10px;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.disconnect-button:hover {
+  background-color: #cc0000;
 }
 
 .status {

@@ -272,6 +272,29 @@ function StakingApp() {
     }
   };
 
+  const disconnectWallet = async () => {
+    try {
+      // Clear all state
+      setIsConnected(false);
+      setAccount("");
+      setNetworkName("");
+      setStakedBalance("0");
+      setTotalStaked("0");
+      setStatus("Wallet disconnected");
+      
+      // If using ethereum events, remove them
+      if (window.ethereum) {
+        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+        window.ethereum.removeListener('chainChanged', () => window.location.reload());
+      }
+      
+      // You might want to reload the page to ensure a clean state
+      // window.location.reload();
+    } catch (error) {
+      setStatus("Error disconnecting: " + error.message);
+    }
+  };
+
   return (
     <div className="App">
       <h2>Staking dApp</h2>
@@ -284,6 +307,9 @@ function StakingApp() {
         <div className="wallet-info">
           <p>Connected Account: {account.slice(0, 6)}...{account.slice(-4)}</p>
           <p>Network: {networkName}</p>
+          <button onClick={disconnectWallet} className="disconnect-button">
+            Disconnect Wallet
+          </button>
         </div>
       )}
 
