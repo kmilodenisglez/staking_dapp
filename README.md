@@ -23,7 +23,7 @@ npx hardhat ignition deploy ./ignition/modules/Staking.js --network localhost
 ```
 ### Option 2 – Using the `deploy.js` script:
 ```shell
-npx hardhat run scripts/deploy.js cd --network localhost
+npx hardhat run scripts/deploy.js --network localhost
 ```
 
 ## Interact with contract
