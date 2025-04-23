@@ -36,12 +36,12 @@ contract StakingContractBetter {
     
     // Bloquea depósitos directos vía receive
     receive() external payable {
-        require(msg.sender == address(this), "Depositos directos no permitidos");
+        require(msg.sender == address(this), "Direct deposits not allowed");
     }
 
     function stake(uint256 amount) public payable {
-        require(amount > 0, "Cantidad debe ser mayor a 0");
-        require(msg.value == amount, "Monto ETH incorrecto");
+        require(amount > 0, "Amount must be greater than 0");
+        require(msg.value == amount, "Incorrect ETH amount");
 
         totalStaked += amount;
         stakedBalances[msg.sender] += amount;
@@ -50,8 +50,8 @@ contract StakingContractBetter {
     }
 
     function unstake(uint256 amount) public {
-        require(amount > 0, "Cantidad debe ser mayor a 0");
-        require(amount <= stakedBalances[msg.sender], "Saldo insuficiente");
+        require(amount > 0, "Amount must be greater than 0");
+        require(amount <= stakedBalances[msg.sender], "Insufficient balance");
 
         totalStaked -= amount;
         stakedBalances[msg.sender] -= amount;
@@ -62,12 +62,12 @@ contract StakingContractBetter {
 
     function withdraw() public {
         uint256 amount = withdrawable[msg.sender];
-        require(amount > 0, "Nada para retirar");
+        require(amount > 0, "Nothing to withdraw");
 
         withdrawable[msg.sender] = 0;
 
         (bool success, ) = msg.sender.call{value: amount}("");
-        require(success, "Transferencia fallida");
+        require(success, "Failed transfer");
 
         emit Withdrawn(msg.sender, amount);
     }
