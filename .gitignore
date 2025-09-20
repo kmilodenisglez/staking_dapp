@@ -18,3 +18,4 @@ ignition/deployments/chain-31337
 /.idea
 /codealike.json
 /log.log
+/ignition/deployments/
