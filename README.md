@@ -1,4 +1,4 @@
-# Ethereum Staking dApp
+# Poligon/Ethereum Testnet Staking dApp
 
 [![Hardhat](https://hardhat.org/hardhat-logo.svg)](https://hardhat.org/)
 
@@ -40,7 +40,7 @@ staking_dapp/
 ### 1. Clone the Repository
 
 ```sh
-git clone <YOUR_REPOSITORY_URL>
+git clone https://github.com/kmilodenisglez/staking_dapp.git
 cd staking_dapp
 ```
 
