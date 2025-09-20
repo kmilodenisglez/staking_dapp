@@ -5,13 +5,17 @@
   "scripts": {
     "compile": "hardhat compile",
     "test": "hardhat test",
-    "deploy:local": "hardhat run scripts/deploy.ts --network localhost",
+    "deploy:local": "hardhat run scripts/deploy.ts --network localnet",
     "deploy:amoy": "hardhat run scripts/deploy.ts --network amoy",
-    "interact:local": "hardhat run scripts/interact.mjs --network localhost",
-    "interact:amoy": "hardhat run scripts/interact.mjs --network amoy",
+    "deploy:ignition:local": "hardhat ignition deploy ignition/modules/App.ts --network localnet",
+    "deploy:ignition:amoy": "hardhat ignition deploy ignition/modules/App.ts --network amoy",
+    "interact:local": "hardhat run scripts/interact.ts --network localnet",
+    "interact:amoy": "hardhat run scripts/interact.ts --network amoy",
+    "interact:ignition:local": "hardhat run scripts/interact.ts --network localnet",
     "metadata-server": "node scripts/metadata-server.mjs",
     "verify:amoy": "hardhat verify --network amoy",
-    "node": "hardhat node"
+    "node": "hardhat node",
+    "start": "react-scripts start"
   },
   "keywords": [
     "blockchain",

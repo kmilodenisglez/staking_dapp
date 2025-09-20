@@ -1,4 +1,4 @@
-const { buildModule } = require("@nomicfoundation/hardhat-ignition/modules");
+import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
 
 const StakingModule = buildModule("StakingModule", (m) => {
   // Define the contract to deploy
@@ -8,4 +8,4 @@ const StakingModule = buildModule("StakingModule", (m) => {
   return { stakingContract };
 });
 
-module.exports = StakingModule;
+export default StakingModule;
